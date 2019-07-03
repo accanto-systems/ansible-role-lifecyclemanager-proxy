@@ -1,0 +1,54 @@
+
+- name: Remove existing proxy site (if exists)
+  command: a2dissite lm-proxy.conf
+  failed_when: false
+
+- name: Remove existing proxy config (if exists)
+  file:
+    state: absent
+    path: /etc/apache2/sites-available/lm-proxy.conf
+
+## LM SSL
+- when: lm_secure|default(False)|bool == True
+  block:
+    - name: Ensure apache SSL directory exists
+      file: 
+        path: /etc/apache2/ssl
+        state: directory 
+    - name: Generate RSA key for apache
+      openssl_privatekey:
+        path: /etc/apache2/ssl/lm-ca.key
+        state: present
+        type: RSA
+        size: 2048
+    - name: Generate Certificate signing request for apache
+      openssl_csr:
+        path: /etc/apache2/ssl/lm-ca.csr
+        state: present
+        privatekey_path: /etc/apache2/ssl/lm-ca.key
+        country_name: "{{ lm_crs_country_name }}"
+        state_or_province_name: "{{ lm_crs_state_or_province_name }}"
+        locality_name: "{{ lm_crs_locality_name }}"
+        organization_name: "{{ lm_crs_organization_name }}"
+        organizational_unit_name: "{{ lm_crs_organizational_unit_name }}"
+        common_name: "{{ lm_crs_common_name }}"
+    - name: Generate Certificate for apache
+      openssl_certificate:
+        path: /etc/apache2/ssl/lm-ca.crt
+        state: present
+        privatekey_path: /etc/apache2/ssl/lm-ca.key
+        csr_path: /etc/apache2/ssl/lm-ca.csr
+        provider: selfsigned
+
+- name: Copy proxy config
+  template:
+    src: lm-proxy.conf
+    dest: /etc/apache2/sites-available
+    
+- name: Add proxy site
+  command: a2ensite lm-proxy.conf
+
+- name: Restart Apache
+  service:
+    name: apache2
+    state: restarted

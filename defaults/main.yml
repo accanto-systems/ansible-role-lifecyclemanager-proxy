@@ -1,0 +1,22 @@
+lm_ui_proxy_port: 8080
+lm_api_proxy_port: 8081
+
+lm_ui_proxy_target_host: ui.lm
+lm_ui_non_ssl_port: 32080
+lm_ui_ssl_port: 32443
+lm_api_proxy_target_host: app.lm
+lm_api_non_ssl_port: 32080
+lm_api_ssl_port: 32443
+
+lm_secure: True
+lm_crs_country_name: UK
+lm_crs_state_or_province_name: UK
+lm_crs_locality_name: UK
+lm_crs_organization_name: LM
+lm_crs_organizational_unit_name: LM
+lm_crs_common_name: LM
+
+lm_kibana_enabled: False
+lm_kibana_proxy_port: 8083
+lm_kibana_proxy_target_host: kibana.lm
+lm_kibana_non_ssl_port: 32080

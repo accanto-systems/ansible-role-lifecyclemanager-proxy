@@ -1,0 +1,29 @@
+- name: Check Apache Installed
+  import_tasks: check_apache_installed.yml
+
+- name: Ensure Python and Pip installed
+  apt: 
+    name: 
+      - python
+      - python-pip
+    state: present 
+    update_cache: yes
+    
+- name: Install pyopenssl
+  pip:
+    name: pyopenssl
+    state: present
+
+- name: Add LM ingress hosts to hostsfile 
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 ui.lm app.lm kibana.lm vault.lm kafka.lm"
+    state: present
+
+- name: Add LM Proxy Site
+  import_tasks: add_lm.yml
+
+- name: Set API access address
+  set_fact: 
+    lm_proxy_api_addr: "{% if lm_secure|default(False)|bool == True %}https{% else %}http{% endif %}://{{ kubeadm_advertise_address if kubeadm_advertise_address is defined else hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{lm_api_proxy_port}}"
+
