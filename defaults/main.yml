@@ -1,5 +1,8 @@
 lm_address: 127.0.0.1
 
+apache2_port: 80
+apache2_ssl_port: 443
+
 lm_ui_proxy_port: 8080
 lm_api_proxy_port: 8081
 
@@ -19,6 +22,6 @@ lm_crs_organizational_unit_name: LM
 lm_crs_common_name: LM
 
 lm_kibana_enabled: False
-lm_kibana_proxy_port: 8083
+lm_kibana_proxy_port: 8084
 lm_kibana_proxy_target_host: kibana.lm
 lm_kibana_non_ssl_port: 32080
